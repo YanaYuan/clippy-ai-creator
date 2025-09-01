@@ -33,7 +33,7 @@ Visit the live application: [Clippy on Vercel](https://your-app-name.vercel.app)
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/clippy-ai-creator.git
+   git clone https://github.com/YanaYuan/clippy-ai-creator.git
    cd clippy-ai-creator
    ```
 
@@ -116,7 +116,7 @@ If you have any questions or need help, please open an issue on GitHub or contac
 
 ---
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by YanaYuan
 
 - `index.html` - Main webpage with chat interface
 - `style.css` - Styling for the chat interface
