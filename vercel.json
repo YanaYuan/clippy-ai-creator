@@ -4,6 +4,9 @@
     "api/chat.py": {
       "runtime": "@vercel/python"
     },
+    "api/debug.py": {
+      "runtime": "@vercel/python"
+    },
     "api/index.py": {
       "runtime": "@vercel/python"
     }
@@ -12,6 +15,10 @@
     {
       "src": "/api/chat",
       "dest": "/api/chat.py"
+    },
+    {
+      "src": "/api/debug",
+      "dest": "/api/debug.py"
     },
     {
       "src": "/",

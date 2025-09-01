@@ -126,8 +126,9 @@ window.sendMessage = async function() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
     try {
-        // 调用API获取完整响应
-        const response = await fetch(API_CONFIG.baseUrl + '/chat', {
+        // 调用API获取完整响应 - 动态获取API配置
+        const apiBaseUrl = window.API_CONFIG ? window.API_CONFIG.baseUrl : "/api";
+        const response = await fetch(apiBaseUrl + '/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -259,8 +260,9 @@ window.sendTemplateInstructionToClaud = async function(templateName) {
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         
-        // 调用新的API
-        const response = await fetch(API_CONFIG.baseUrl + '/chat', {
+        // 调用新的API - 动态获取API配置
+        const apiBaseUrl = window.API_CONFIG ? window.API_CONFIG.baseUrl : "/api";
+        const response = await fetch(apiBaseUrl + '/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

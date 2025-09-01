@@ -14,6 +14,15 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
         
         try:
+            # 调试信息
+            debug_info = {
+                'API_KEY_exists': bool(os.environ.get("API_KEY")),
+                'API_KEY_length': len(os.environ.get("API_KEY", "")),
+                'BASE_URL': os.environ.get("BASE_URL", "not_set"),
+                'MODEL': os.environ.get("MODEL", "not_set"),
+                'env_vars': list(os.environ.keys())
+            }
+            
             # 读取请求体
             content_length = int(self.headers.get('Content-Length', 0))
             post_data = self.rfile.read(content_length)
@@ -27,10 +36,12 @@ class handler(BaseHTTPRequestHandler):
             model = os.environ.get("MODEL", "claude-sonnet-4-20250514")
             
             if not api_key:
-                self.wfile.write(json.dumps({
+                error_result = {
                     'success': False,
-                    'error': 'API key not configured'
-                }).encode())
+                    'error': 'API key not configured',
+                    'debug': debug_info
+                }
+                self.wfile.write(json.dumps(error_result).encode())
                 return
             
             # 调用Claude API
@@ -65,12 +76,15 @@ class handler(BaseHTTPRequestHandler):
                     result = {
                         'success': True,
                         'content': content,
-                        'usage': api_response.get('usage', {})
+                        'usage': api_response.get('usage', {}),
+                        'debug': debug_info
                     }
                 else:
                     result = {
                         'success': False,
-                        'error': 'No response content'
+                        'error': 'No response content',
+                        'api_response': api_response,
+                        'debug': debug_info
                     }
                 
                 self.wfile.write(json.dumps(result).encode())
@@ -78,20 +92,23 @@ class handler(BaseHTTPRequestHandler):
                 error_result = {
                     'success': False,
                     'error': f'API request failed with status {response.status_code}',
-                    'details': response.text
+                    'details': response.text,
+                    'debug': debug_info
                 }
                 self.wfile.write(json.dumps(error_result).encode())
                 
         except requests.exceptions.Timeout:
             error_result = {
                 'success': False,
-                'error': 'Request timed out'
+                'error': 'Request timed out',
+                'debug': debug_info
             }
             self.wfile.write(json.dumps(error_result).encode())
         except Exception as e:
             error_result = {
                 'success': False,
-                'error': f'Server error: {str(e)}'
+                'error': f'Server error: {str(e)}',
+                'debug': debug_info
             }
             self.wfile.write(json.dumps(error_result).encode())
     
