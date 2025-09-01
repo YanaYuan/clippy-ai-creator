@@ -10,7 +10,7 @@ const MAX_FILES = 3;
 let selectedTemplate = null;
 
 const API_CONFIG = {
-    baseUrl: "http://localhost:5000/api"
+    baseUrl: window.location.hostname === 'localhost' ? "http://localhost:5000/api" : "/api"
 };
 
 let conversationHistory = [];
