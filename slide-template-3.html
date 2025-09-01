@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Clean Slide</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 60px;
+            background: #f8fafc;
+            color: #2d3748;
+            min-height: 100vh;
+        }
+        .slide {
+            background: white;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 80px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        h1 {
+            font-size: 2.2em;
+            font-weight: 300;
+            color: #1a202c;
+            margin-bottom: 40px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: #4299e1;
+            margin: 0 auto 50px auto;
+        }
+        .content-section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #4299e1;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .section-content {
+            font-size: 1em;
+            line-height: 1.7;
+            color: #4a5568;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-top: 40px;
+        }
+        .quote-section {
+            background: #f7fafc;
+            padding: 30px;
+            border-left: 4px solid #4299e1;
+            margin: 40px 0;
+            font-style: italic;
+            color: #2d3748;
+        }
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .data-item {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+        .data-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #4299e1;
+            margin-bottom: 5px;
+        }
+        .data-label {
+            font-size: 0.9em;
+            color: #718096;
+        }
+        .footer-note {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.9em;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <h1>{{TITLE}}</h1>
+        <div class="divider"></div>
+        
+        <div class="two-column">
+            <div>
+                <div class="content-section">
+                    <div class="section-title">Overview</div>
+                    <div class="section-content">{{OVERVIEW_CONTENT}}</div>
+                </div>
+                
+                <div class="content-section">
+                    <div class="section-title">Key Points</div>
+                    <div class="section-content">{{KEY_POINTS}}</div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="quote-section">
+                    "{{QUOTE_TEXT}}"
+                </div>
+                
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-value">{{DATA_1_VALUE}}</div>
+                        <div class="data-label">{{DATA_1_LABEL}}</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">{{DATA_2_VALUE}}</div>
+                        <div class="data-label">{{DATA_2_LABEL}}</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">{{DATA_3_VALUE}}</div>
+                        <div class="data-label">{{DATA_3_LABEL}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-note">{{FOOTER_TEXT}}</div>
+    </div>
+</body>
+</html>

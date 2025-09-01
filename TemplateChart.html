@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh"><head></head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>盈利能力与收入表现对比</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.tailwindcss.com"></script><style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            
+            position: relative;
+        }
+        .bg-tech-pattern {
+            background-image: radial-gradient(#ffffff22 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .gradient-border {
+            position: relative;
+        }
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .data-card {
+            background: rgba(0, 51, 102, 0.4);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .metric-card {
+            background: rgba(0, 51, 102, 0.4);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .platform-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0, 191, 255, 0.2);
+            padding: 8px 0;
+        }
+        .platform-item:last-child {
+            border-bottom: none;
+        }
+        .platform-name {
+            font-weight: bold;
+            color: #e0f2fe;
+        }
+        .platform-revenue {
+            font-weight: bold;
+            color: #00bfff;
+        }
+        .profit-status {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .profit-positive {
+            background-color: rgba(76, 175, 80, 0.3);
+            color: #4ade80;
+        }
+        .profit-negative {
+            background-color: rgba(244, 67, 54, 0.3);
+            color: #f87171;
+        }
+        .profit-neutral {
+            background-color: rgba(255, 193, 7, 0.3);
+            color: #facc15;
+        }
+    </style>
+</head>
+<body>
+<div class="slide-container bg-gradient-to-br from-gray-900 to-blue-900 text-white relative">
+<!-- Background Pattern -->
+<div class="absolute inset-0 bg-tech-pattern opacity-10"></div>
+<!-- Header -->
+<header class="pt-12 px-16">
+<h1 class="text-4xl font-bold gradient-border inline-block">盈利能力与收入表现对比</h1>
+<div class="w-full h-px bg-gradient-to-r from-blue-400 to-transparent mt-6 mb-8"></div>
+<p class="text-lg text-blue-200">主流AI PPT生成产品的收入规模、盈利情况与单用户收入（ARPU）对比分析</p>
+</header>
+<!-- Main Content -->
+<main class="px-16 mt-8">
+<!-- Data Visualization Section -->
+<div class="flex flex-row justify-between space-x-6">
+<!-- Left Column: Revenue Comparison -->
+<div class="w-1/2 flex flex-col">
+<h3 class="text-2xl font-semibold text-blue-300 mb-3">
+<i class="fas fa-chart-bar mr-2"></i>平台收入规模对比 (2024-2025)
+</h3>
+<div class="chart-container">
+<canvas id="revenueChart"></canvas>
+</div>
+<div class="data-card">
+<p class="text-xl font-semibold text-cyan-200 mb-1">收入差距分析:</p>
+<p class="text-gray-300 mb-2">Gamma与Canva之间的收入差距达54倍，体现了AI专注型平台与设计巨头的市场规模差距。Gamma作为AI PPT纯玩家已达到5千万美元收入，领先同行。</p>
+</div>
+</div>
+<!-- Right Column: Platform Metrics -->
+<div class="w-1/2 flex flex-col">
+<h3 class="text-2xl font-semibold text-blue-300 mb-3">
+<i class="fas fa-coins mr-2"></i>主要平台盈利状况
+</h3>
+<div class="bg-blue-800 bg-opacity-40 p-4 rounded-lg border border-blue-600 mb-3">
+<div class="platform-item">
+<span class="platform-name">Gamma</span>
+<div class="flex items-center space-x-2">
+<span class="platform-revenue">$50M</span>
+<span class="profit-status profit-positive">盈利</span>
+</div>
+</div>
+<div class="platform-item">
+<span class="platform-name">Tome</span>
+<div class="flex items-center space-x-2">
+<span class="platform-revenue">$18.8M</span>
+<span class="profit-status profit-negative">已转型</span>
+</div>
+</div>
+<div class="platform-item">
+<span class="platform-name">Beautiful.AI</span>
+<div class="flex items-center space-x-2">
+<span class="platform-revenue">$8.3M</span>
+<span class="profit-status profit-neutral">数据不明</span>
+</div>
+</div>
+<div class="platform-item">
+<span class="platform-name">Slidebean</span>
+<div class="flex items-center space-x-2">
+<span class="platform-revenue">$6.3M</span>
+<span class="profit-status profit-neutral">数据不明</span>
+</div>
+</div>
+<div class="platform-item">
+<span class="platform-name">Canva (全平台)</span>
+<div class="flex items-center space-x-2">
+<span class="platform-revenue">$2.7B</span>
+<span class="profit-status profit-positive">盈利</span>
+</div>
+</div>
+</div>
+<div class="data-card mt-2">
+<p class="text-xl font-semibold text-cyan-200 mb-1">团队规模效率:</p>
+<p class="text-gray-300 mb-2">• Gamma: 仅30人团队实现5000万美元收入<br/>
+• Tome: 59人团队实现1880万美元收入<br/>
+• Gamma人均创收约166万美元，是Tome的5.2倍</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="absolute bottom-0 w-full px-16 py-4 flex justify-between items-center text-sm text-gray-400">
+</footer>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Revenue Comparison Chart
+        var revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        var revenueChart = new Chart(revenueCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Gamma', 'Tome', 'Beautiful.AI', 'Slidebean', 'Canva (全平台)'],
+                datasets: [
+                    {
+                        label: '年度收入 (百万美元)',
+                        data: [50, 18.8, 8.3, 6.3, 2700],
+                        backgroundColor: [
+                            '#00bfff',
+                            '#4a90e2',
+                            '#75aaeb',
+                            '#8fb8de',
+                            '#add8e6'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        type: 'logarithmic',
+                        min: 1,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#e0f2fe',
+                            callback: function(value) {
+                                if (value === 1) return '$1M';
+                                if (value === 10) return '$10M';
+                                if (value === 100) return '$100M';
+                                if (value === 1000) return '$1B';
+                                if (value === 10000) return '$10B';
+                                return '';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#e0f2fe'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var value = context.parsed.y;
+                                if (value >= 1000) {
+                                    return '$' + (value/1000).toFixed(1) + 'B';
+                                } else {
+                                    return '$' + value + 'M';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

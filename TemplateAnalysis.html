@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Robotics Product & Market Analysis - Interactive Presentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+            page-break-after: always;
+        }
+        
+        /* Advanced Background Patterns */
+        .circuit-pattern {
+            background-image: 
+                linear-gradient(90deg, rgba(0,191,255,0.1) 1px, transparent 1px),
+                linear-gradient(180deg, rgba(0,191,255,0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        .hexagon-pattern {
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(0,191,255,0.2) 2px, transparent 2px),
+                radial-gradient(circle at 75% 75%, rgba(138,43,226,0.2) 2px, transparent 2px);
+            background-size: 60px 60px;
+        }
+        
+        /* Animated Elements */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0,191,255,0.5); }
+            50% { box-shadow: 0 0 20px rgba(0,191,255,0.8); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-glow { animation: glow 2s ease-in-out infinite; }
+        .animate-slide-in { animation: slideIn 0.8s ease-out; }
+        
+        /* Custom Components */
+        .robot-card {
+            background: linear-gradient(135deg, rgba(0,51,102,0.8), rgba(75,0,130,0.8));
+            border: 2px solid rgba(0,191,255,0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .robot-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .robot-card:hover::before {
+            left: 100%;
+        }
+        
+        .robot-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,191,255,0.3);
+        }
+        
+        .stat-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #00bfff, #8a2be2, #00bfff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .stat-circle::before {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.9);
+        }
+        
+        .market-segment {
+            background: linear-gradient(45deg, rgba(0,191,255,0.1), rgba(138,43,226,0.1));
+            border-left: 4px solid;
+            border-image: linear-gradient(45deg, #00bfff, #8a2be2) 1;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 0 12px 12px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .market-segment:hover {
+            background: linear-gradient(45deg, rgba(0,191,255,0.2), rgba(138,43,226,0.2));
+            transform: translateX(10px);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 3px solid rgba(0,191,255,0.3);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00bfff, #8a2be2);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00bfff, #8a2be2);
+            border-radius: 4px;
+            transition: width 2s ease-in-out;
+        }
+        
+        /* Additional styles for simple cover page */
+        .bg-tech-pattern {
+            background-image: radial-gradient(#ffffff22 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .title-main {
+            background: linear-gradient(135deg, #00bfff, #4a90e2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle-glow {
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+        }
+        
+        /* Interactive Elements */
+        .interactive-icon {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .interactive-icon:hover {
+            transform: scale(1.2) rotate(10deg);
+            color: #00bfff;
+        }
+        
+        /* Glass Morphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Data Visualization Styles */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            background: rgba(0,51,102,0.3);
+            border-radius: 15px;
+            padding: 1rem;
+            border: 1px solid rgba(0,191,255,0.3);
+        }
+        
+        .metric-box {
+            background: linear-gradient(135deg, rgba(0,191,255,0.2), rgba(138,43,226,0.2));
+            border: 1px solid rgba(0,191,255,0.4);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-box:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(0,191,255,0.3), rgba(138,43,226,0.3));
+        }
+        
+        /* Navigation Dots */
+        .nav-dots {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+        }
+        
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0,191,255,0.3);
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-dot.active {
+            background: #00bfff;
+            transform: scale(1.3);
+        }
+        
+        @media print {
+            .slide-container { page-break-after: always; }
+            .nav-dots { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-slate-900">
+
+<!-- Navigation Dots -->
+<div class="nav-dots">
+    <div class="nav-dot active" onclick="scrollToSlide(0)"></div>
+    <div class="nav-dot" onclick="scrollToSlide(1)"></div>
+    <div class="nav-dot" onclick="scrollToSlide(2)"></div>
+    <div class="nav-dot" onclick="scrollToSlide(3)"></div>
+</div>
+
+<!-- SLIDE 1: COVER PAGE -->
+<div id="slide1" class="slide-container bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white relative">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 circuit-pattern opacity-15"></div>
+    
+    <!-- Header -->
+    <header class="pt-8 px-12 relative z-10">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center text-cyan-300 text-lg font-medium tracking-wider">
+                ROBOTICS INSTITUTE
+            </div>
+            <div class="flex space-x-2">
+                <div class="w-3 h-3 bg-cyan-400 rounded-full"></div>
+                <div class="w-3 h-3 bg-blue-400 rounded-full"></div>
+                <div class="w-3 h-3 bg-purple-400 rounded-full"></div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="flex items-center h-5/6 px-12 relative z-10">
+        <!-- Content Area -->
+        <div class="flex-1 pr-20">
+            <!-- Main Title -->
+            <div class="mb-16">
+                <h1 class="text-8xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-4 leading-none tracking-tight">
+                    ROBOTICS
+                </h1>
+                <h2 class="text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-8">
+                    Market Analysis
+                </h2>
+                <div class="w-32 h-1 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+            </div>
+            
+            <!-- Subtitle -->
+            <p class="text-2xl text-blue-200/90 mb-16 subtitle-glow max-w-4xl leading-relaxed font-light">
+                Comprehensive Analysis of Product Innovation and Market Dynamics in Robotics Industry
+            </p>
+            
+            <!-- Call to Action -->
+            <div class="robot-card inline-flex items-center px-8 py-4 bg-gradient-to-r from-cyan-600/20 to-blue-600/20 backdrop-blur-lg border border-cyan-400/30 rounded-2xl">
+                <i class="fas fa-chart-line mr-4 text-cyan-400 text-xl"></i>
+                <span class="text-white font-semibold text-lg">Explore Market Insights</span>
+            </div>
+        </div>
+        
+        <!-- Right Side Design -->
+        <div class="flex-shrink-0 relative">
+            <div class="relative w-80 h-80">
+                <!-- Simple elegant circle with robot -->
+                <div class="w-full h-full bg-gradient-to-br from-slate-800/30 to-slate-900/20 backdrop-blur-xl rounded-full border border-cyan-400/20 flex items-center justify-center">
+                    <i class="fas fa-robot text-6xl text-cyan-400 opacity-60"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 2: MARKET LANDSCAPE OVERVIEW -->
+<div id="slide2" class="slide-container bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white relative">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 circuit-pattern opacity-15"></div>
+    
+    <!-- Header -->
+    <header class="pt-8 px-12">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                    Market Landscape Overview
+                </h1>
+                <p class="text-xl text-blue-200 mt-3 subtitle-glow">
+                    Industrial automation leads at $55B while service robotics grows fastest at 15.2% CAGR
+                </p>
+            </div>
+            <div class="flex space-x-2">
+                <div class="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
+                <div class="w-3 h-3 bg-blue-400 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
+                <div class="w-3 h-3 bg-purple-400 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+            </div>
+        </div>
+        <div class="w-full h-px bg-gradient-to-r from-cyan-400 via-blue-400 to-transparent mb-8"></div>
+    </header>
+    
+    <!-- Main Content Grid -->
+    <main class="px-12 grid grid-cols-12 gap-6 h-5/6">
+        
+        <!-- Left Column: Market Segments -->
+        <div class="col-span-7">
+            <h2 class="text-2xl font-semibold text-cyan-300 mb-6 flex items-center">
+                <i class="fas fa-layer-group mr-3 text-cyan-400"></i>
+                Key Market Segments
+            </h2>
+            
+            <!-- Industrial Robotics -->
+            <div class="market-segment">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-industry text-3xl text-blue-400 mr-4"></i>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Industrial Automation</h3>
+                            <p class="text-blue-200 text-sm">Manufacturing & Production</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-cyan-400">$55B</div>
+                        <div class="text-sm text-gray-300">Market Value</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 85%"></div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-300 mt-2">
+                    <span>Growth: 8.5% CAGR</span>
+                    <span>Leaders: ABB, KUKA, Fanuc</span>
+                </div>
+            </div>
+            
+            <!-- Service Robotics -->
+            <div class="market-segment">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-handshake text-3xl text-purple-400 mr-4"></i>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Service Robotics</h3>
+                            <p class="text-purple-200 text-sm">Professional & Personal Services</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-purple-400">$28B</div>
+                        <div class="text-sm text-gray-300">Market Value</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-300 mt-2">
+                    <span>Growth: 15.2% CAGR</span>
+                    <span>Leaders: Boston Dynamics, SoftBank</span>
+                </div>
+            </div>
+            
+            <!-- Consumer Robotics -->
+            <div class="market-segment">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-home text-3xl text-pink-400 mr-4"></i>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Consumer Robotics</h3>
+                            <p class="text-pink-200 text-sm">Home & Entertainment</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-pink-400">$12B</div>
+                        <div class="text-sm text-gray-300">Market Value</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 45%"></div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-300 mt-2">
+                    <span>Growth: 18.1% CAGR</span>
+                    <span>Leaders: iRobot, Amazon, Anki</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Key Insights & Technology Trends -->
+        <div class="col-span-5">
+            <h2 class="text-2xl font-semibold text-purple-300 mb-6 flex items-center">
+                <i class="fas fa-lightbulb mr-3 text-purple-400"></i>
+                Technology Trends
+            </h2>
+            
+            <!-- Trend Cards -->
+            <div class="space-y-4">
+                <div class="robot-card p-4">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-brain text-2xl text-cyan-400 mr-3"></i>
+                        <h3 class="text-lg font-bold">AI Integration</h3>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-3">Machine learning and computer vision capabilities enabling autonomous decision-making</p>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-cyan-400">Adoption: 78%</span>
+                        <span class="text-gray-400">Impact: High</span>
+                    </div>
+                </div>
+                
+                <div class="robot-card p-4">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-users text-2xl text-purple-400 mr-3"></i>
+                        <h3 class="text-lg font-bold">Human-Robot Collaboration</h3>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-3">Collaborative robots (cobots) working safely alongside humans</p>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-purple-400">Adoption: 65%</span>
+                        <span class="text-gray-400">Impact: Medium</span>
+                    </div>
+                </div>
+                
+                <div class="robot-card p-4">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-cloud text-2xl text-pink-400 mr-3"></i>
+                        <h3 class="text-lg font-bold">Edge Computing</h3>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-3">Real-time processing and reduced latency for critical applications</p>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-pink-400">Adoption: 52%</span>
+                        <span class="text-gray-400">Impact: Growing</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- SLIDE 3: COMPETITIVE LANDSCAPE & PRODUCT ANALYSIS -->
+<div id="slide3" class="slide-container bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 text-white relative">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 hexagon-pattern opacity-15"></div>
+    
+    <!-- Header -->
+    <header class="pt-8 px-12">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+            Competitive Landscape & Product Analysis
+        </h1>
+        <p class="text-lg text-purple-200 mb-6">Boston Dynamics and Tesla lead innovation while ABB dominates industrial markets with startups securing $2.8B+ funding</p>
+        <div class="w-full h-px bg-gradient-to-r from-purple-400 via-pink-400 to-transparent mb-6"></div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="px-12 grid grid-cols-12 gap-8">
+        
+        <!-- Left Side: Company Analysis -->
+        <div class="col-span-8">
+            <h2 class="text-2xl font-semibold text-purple-300 mb-6">
+                <i class="fas fa-chess-king mr-3"></i>Market Leaders Analysis
+            </h2>
+            
+            <!-- Company Grid -->
+            <div class="grid grid-cols-2 gap-6">
+                
+                <!-- Boston Dynamics -->
+                <div class="robot-card p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-dog text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Boston Dynamics</h3>
+                                <p class="text-sm text-gray-300">Advanced Mobility</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-yellow-400">$1.1B</div>
+                            <div class="text-xs text-gray-400">Valuation</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span>Innovation Score</span>
+                            <span class="text-yellow-400">95%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bg-gradient-to-r from-yellow-400 to-orange-500" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <div class="text-gray-400">Key Products</div>
+                            <div class="text-white">Spot, Atlas, Handle</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400">Focus Area</div>
+                            <div class="text-white">Mobility & Agility</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tesla -->
+                <div class="robot-card p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-bolt text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Tesla</h3>
+                                <p class="text-sm text-gray-300">Autonomous Systems</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-red-400">$800B</div>
+                            <div class="text-xs text-gray-400">Market Cap</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span>Market Reach</span>
+                            <span class="text-red-400">88%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bg-gradient-to-r from-red-500 to-red-600" style="width: 88%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <div class="text-gray-400">Key Products</div>
+                            <div class="text-white">Optimus, FSD, Dojo</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400">Focus Area</div>
+                            <div class="text-white">AI & Automation</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ABB Robotics -->
+                <div class="robot-card p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-industry text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">ABB Robotics</h3>
+                                <p class="text-sm text-gray-300">Industrial Leader</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-blue-400">$4.2B</div>
+                            <div class="text-xs text-gray-400">Revenue</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span>Market Share</span>
+                            <span class="text-blue-400">78%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bg-gradient-to-r from-blue-500 to-blue-600" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <div class="text-gray-400">Key Products</div>
+                            <div class="text-white">IRB Series, YuMi</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400">Focus Area</div>
+                            <div class="text-white">Manufacturing</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Amazon Robotics -->
+                <div class="robot-card p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-500 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-boxes text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Amazon Robotics</h3>
+                                <p class="text-sm text-gray-300">Logistics & Fulfillment</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-orange-400">350K+</div>
+                            <div class="text-xs text-gray-400">Robots Deployed</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span>Efficiency Gain</span>
+                            <span class="text-orange-400">85%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bg-gradient-to-r from-orange-400 to-orange-500" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <div class="text-gray-400">Key Products</div>
+                            <div class="text-white">Kiva, Robin, Cardinal</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400">Focus Area</div>
+                            <div class="text-white">Warehouse Automation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Side: Market Positioning -->
+        <div class="col-span-4">
+            <h2 class="text-2xl font-semibold text-pink-300 mb-6">
+                <i class="fas fa-target mr-3"></i>Positioning Matrix
+            </h2>
+            
+            <!-- Innovation vs Market Share Chart -->
+            <div class="chart-container mb-6">
+                <canvas id="positioningChart"></canvas>
+            </div>
+            
+            <!-- Market Insight -->
+            <div class="mt-6">
+                <p class="text-lg text-gray-300 leading-relaxed">
+                    <i class="fas fa-lightbulb text-yellow-400 mr-3"></i>
+                    <strong class="text-pink-300">Market Insight:</strong> Emerging players like Figure AI and 1X Technologies are driving $2.8B+ in funding toward next-generation humanoid robotics.
+                </p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- SLIDE 4: FUTURE OPPORTUNITIES & INVESTMENT OUTLOOK -->
+<div id="slide4" class="slide-container bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900 text-white relative">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 circuit-pattern opacity-15"></div>
+    
+    <!-- Header -->
+    <header class="pt-8 px-12">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-pink-400 to-cyan-400 bg-clip-text text-transparent mb-2">
+            Future Opportunities & Investment Outlook
+        </h1>
+        <p class="text-lg text-pink-200 mb-6">Strategic three-phase investment approach targeting $266B market potential by 2030, focusing on AI infrastructure and vertical specialization</p>
+        <div class="w-full h-px bg-gradient-to-r from-pink-400 via-cyan-400 to-transparent mb-6"></div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="px-12 grid grid-cols-12 gap-8">
+        
+        <!-- Left Column: Growth Projections -->
+        <div class="col-span-7">
+            <h2 class="text-2xl font-semibold text-cyan-300 mb-6">
+                <i class="fas fa-chart-line mr-3"></i>Market Growth Projections (2025-2030)
+            </h2>
+            
+            <!-- Interactive Chart -->
+            <div class="chart-container mb-6">
+                <canvas id="growthProjectionChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Right Column: Investment Recommendations -->
+        <div class="col-span-5">
+            <h2 class="text-2xl font-semibold text-pink-300 mb-6">
+                <i class="fas fa-bullseye mr-3"></i>Investment Recommendations
+            </h2>
+            
+            <!-- Investment Timeline -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-cyan-300 mb-4">Strategic Timeline</h3>
+                <div class="space-y-4">
+                    
+                    <div class="timeline-item">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-white">2025-2026: Foundation</h4>
+                            <span class="text-cyan-400 text-sm">$2-5B Investment</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">Focus on AI infrastructure, talent acquisition, and core technology development</p>
+                        <div class="flex space-x-2 text-xs">
+                            <span class="px-2 py-1 bg-cyan-900 text-cyan-300 rounded">AI/ML</span>
+                            <span class="px-2 py-1 bg-blue-900 text-blue-300 rounded">Hardware</span>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-white">2027-2028: Expansion</h4>
+                            <span class="text-purple-400 text-sm">$5-10B Investment</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">Scale production, enter new markets, develop specialized applications</p>
+                        <div class="flex space-x-2 text-xs">
+                            <span class="px-2 py-1 bg-purple-900 text-purple-300 rounded">Manufacturing</span>
+                            <span class="px-2 py-1 bg-pink-900 text-pink-300 rounded">Healthcare</span>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-white">2029-2030: Dominance</h4>
+                            <span class="text-pink-400 text-sm">$10-20B Investment</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">Market leadership, global expansion, next-gen technology</p>
+                        <div class="flex space-x-2 text-xs">
+                            <span class="px-2 py-1 bg-pink-900 text-pink-300 rounded">Global</span>
+                            <span class="px-2 py-1 bg-red-900 text-red-300 rounded">Innovation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Bottom Summary -->
+    <footer class="absolute bottom-4 left-12 right-12">
+        <div class="glass rounded-lg p-6 flex justify-between items-center">
+            <div class="text-base">
+                <strong class="text-cyan-400 text-lg">Key Takeaway:</strong> 
+                <span class="text-gray-300">The robotics market presents unprecedented opportunities with $266B projected market size by 2030, driven by AI integration and emerging applications across healthcare, agriculture, and space sectors.</span>
+            </div>
+            <div class="text-right text-sm text-gray-400">
+                Future Robotics Institute • Strategic Analysis 2025
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    // Navigation functionality
+    function scrollToSlide(slideIndex) {
+        const slides = document.querySelectorAll('.slide-container');
+        const targetSlide = slides[slideIndex];
+        if (targetSlide) {
+            targetSlide.scrollIntoView({ behavior: 'smooth' });
+            
+            // Update navigation dots
+            document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === slideIndex);
+            });
+        }
+    }
+    
+    // Initialize charts when document loads
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // Positioning Chart for Slide 3
+        const positioningCtx = document.getElementById('positioningChart');
+        if (positioningCtx) {
+            new Chart(positioningCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Companies',
+                        data: [
+                            {x: 95, y: 25, company: 'Boston Dynamics'},
+                            {x: 75, y: 85, company: 'Tesla'},
+                            {x: 60, y: 78, company: 'ABB'},
+                            {x: 70, y: 65, company: 'Amazon'},
+                            {x: 85, y: 45, company: 'KUKA'},
+                            {x: 55, y: 35, company: 'Universal Robots'}
+                        ],
+                        backgroundColor: ['#fbbf24', '#ef4444', '#3b82f6', '#f97316', '#8b5cf6', '#10b981'],
+                        pointRadius: 8,
+                        pointHoverRadius: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Innovation Score', color: '#e0f2fe' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#e0f2fe' },
+                            min: 40, max: 100
+                        },
+                        y: {
+                            title: { display: true, text: 'Market Share %', color: '#e0f2fe' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#e0f2fe' },
+                            min: 20, max: 90
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const point = context.raw;
+                                    return `${point.company}: Innovation ${point.x}%, Market Share ${point.y}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Growth Projection Chart for Slide 4
+        const growthCtx = document.getElementById('growthProjectionChart');
+        if (growthCtx) {
+            new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2025', '2026', '2027', '2028', '2029', '2030'],
+                    datasets: [
+                        {
+                            label: 'Industrial Robots',
+                            data: [58, 63, 69, 75, 82, 90],
+                            borderColor: '#00bfff',
+                            backgroundColor: 'rgba(0, 191, 255, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Service Robots',
+                            data: [22, 26, 31, 37, 44, 53],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Healthcare Robotics',
+                            data: [8, 11, 14, 17, 21, 25],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Agricultural Robots',
+                            data: [3, 4, 6, 7, 9, 12],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { 
+                                color: '#e0f2fe',
+                                callback: function(value) { return '$' + value + 'B'; }
+                            }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#e0f2fe' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: { color: '#e0f2fe', font: { size: 11 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': $' + context.parsed.y + 'B';
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+        
+        // Animate progress bars
+        setTimeout(() => {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
+        }, 500);
+    });
+    
+    // Add scroll-based navigation dot updates
+    window.addEventListener('scroll', function() {
+        const slides = document.querySelectorAll('.slide-container');
+        const scrollPosition = window.scrollY + window.innerHeight / 2;
+        
+        slides.forEach((slide, index) => {
+            const slideTop = slide.offsetTop;
+            const slideBottom = slideTop + slide.offsetHeight;
+            
+            if (scrollPosition >= slideTop && scrollPosition < slideBottom) {
+                document.querySelectorAll('.nav-dot').forEach((dot, dotIndex) => {
+                    dot.classList.toggle('active', dotIndex === index);
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
