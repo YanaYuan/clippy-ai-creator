@@ -5,9 +5,9 @@ import os
 
 app = Flask(__name__)
 
-# API Configuration - 从环境变量读取
+# API Configuration - 仅从环境变量读取，不包含默认密钥
 API_CONFIG = {
-    "api_key": os.environ.get("API_KEY", "sk-wAR2VA6TYUt20h9xUA326L3F1CWcZxZQa6nBZaaNekPd8Nzz"),
+    "api_key": os.environ.get("API_KEY"),
     "base_url": os.environ.get("BASE_URL", "https://www.dmxapi.cn/v1"),
     "model": os.environ.get("MODEL", "claude-sonnet-4-20250514")
 }
@@ -25,6 +25,13 @@ def handler(request):
     
     if request.method != 'POST':
         return jsonify({'error': 'Method not allowed'}), 405
+    
+    # 检查API密钥是否配置
+    if not API_CONFIG["api_key"]:
+        return jsonify({'error': 'API key not configured. Please set API_KEY environment variable.'}), 500, {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        }
     
     try:
         data = request.get_json()
