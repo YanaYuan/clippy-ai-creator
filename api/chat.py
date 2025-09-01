@@ -1,100 +1,104 @@
-from flask import Flask, request, jsonify, Response
-import requests
+from http.server import BaseHTTPRequestHandler
 import json
+import requests
 import os
 
-app = Flask(__name__)
-
-# API Configuration - 仅从环境变量读取，不包含默认密钥
-API_CONFIG = {
-    "api_key": os.environ.get("API_KEY"),
-    "base_url": os.environ.get("BASE_URL", "https://www.dmxapi.cn/v1"),
-    "model": os.environ.get("MODEL", "claude-sonnet-4-20250514")
-}
-
-def handler(request):
-    """Vercel Serverless Function Handler"""
-    
-    # 处理CORS
-    if request.method == 'OPTIONS':
-        return '', 200, {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type'
-        }
-    
-    if request.method != 'POST':
-        return jsonify({'error': 'Method not allowed'}), 405
-    
-    # 检查API密钥是否配置
-    if not API_CONFIG["api_key"]:
-        return jsonify({'error': 'API key not configured. Please set API_KEY environment variable.'}), 500, {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type'
-        }
-    
-    try:
-        data = request.get_json()
-        messages = data.get('messages', [])
+class handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        # 设置CORS头
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
         
-        # Prepare the request to Claude API
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {API_CONFIG["api_key"]}'
-        }
-        
-        payload = {
-            'model': API_CONFIG['model'],
-            'messages': messages,
-            'stream': True,
-            'max_tokens': 10000
-        }
-        
-        def generate():
-            try:
-                # Make streaming request to Claude API
-                response = requests.post(
-                    f'{API_CONFIG["base_url"]}/chat/completions',
-                    headers=headers,
-                    json=payload,
-                    stream=True,
-                    timeout=30
-                )
+        try:
+            # 读取请求体
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode('utf-8'))
+            
+            messages = data.get('messages', [])
+            
+            # API配置 - 从环境变量读取，带默认值
+            api_key = os.environ.get("API_KEY", "sk-wAR2VA6TYUt20h9xUA326L3F1CWcZxZQa6nBZaaNekPd8Nzz")
+            base_url = os.environ.get("BASE_URL", "https://www.dmxapi.cn/v1")
+            model = os.environ.get("MODEL", "claude-sonnet-4-20250514")
+            
+            if not api_key:
+                self.wfile.write(json.dumps({
+                    'success': False,
+                    'error': 'API key not configured'
+                }).encode())
+                return
+            
+            # 调用Claude API
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {api_key}'
+            }
+            
+            payload = {
+                'model': model,
+                'messages': messages,
+                'stream': False,  # 非流式，一次性获取完整响应
+                'max_tokens': 10000
+            }
+            
+            response = requests.post(
+                f'{base_url}/chat/completions',
+                headers=headers,
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                # 返回完整响应，前端会模拟流式效果
+                api_response = response.json()
                 
-                if response.status_code != 200:
-                    yield f"data: {json.dumps({'error': f'API request failed with status {response.status_code}'})}\n\n"
-                    return
+                # 提取助手消息内容
+                if 'choices' in api_response and len(api_response['choices']) > 0:
+                    content = api_response['choices'][0]['message']['content']
+                    
+                    # 返回结构化响应，便于前端处理
+                    result = {
+                        'success': True,
+                        'content': content,
+                        'usage': api_response.get('usage', {})
+                    }
+                else:
+                    result = {
+                        'success': False,
+                        'error': 'No response content'
+                    }
                 
-                for line in response.iter_lines():
-                    if line:
-                        line = line.decode('utf-8')
-                        if line.startswith('data: '):
-                            data_content = line[6:]  # Remove 'data: ' prefix
-                            if data_content.strip() == '[DONE]':
-                                yield f"data: {json.dumps({'done': True})}\n\n"
-                                break
-                            try:
-                                chunk_data = json.loads(data_content)
-                                yield f"data: {json.dumps(chunk_data)}\n\n"
-                            except json.JSONDecodeError:
-                                continue
-                                
-            except requests.exceptions.Timeout:
-                yield f"data: {json.dumps({'error': 'Request timed out'})}\n\n"
-            except requests.exceptions.RequestException as e:
-                yield f"data: {json.dumps({'error': f'Request failed: {str(e)}'})}\n\n"
-            except Exception as e:
-                yield f"data: {json.dumps({'error': f'Server error: {str(e)}'})}\n\n"
-        
-        return Response(generate(), mimetype='text/plain', headers={
-            'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type'
-        })
-        
-    except Exception as e:
-        return jsonify({'error': f'Server error: {str(e)}'}), 500, {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type'
-        }
+                self.wfile.write(json.dumps(result).encode())
+            else:
+                error_result = {
+                    'success': False,
+                    'error': f'API request failed with status {response.status_code}',
+                    'details': response.text
+                }
+                self.wfile.write(json.dumps(error_result).encode())
+                
+        except requests.exceptions.Timeout:
+            error_result = {
+                'success': False,
+                'error': 'Request timed out'
+            }
+            self.wfile.write(json.dumps(error_result).encode())
+        except Exception as e:
+            error_result = {
+                'success': False,
+                'error': f'Server error: {str(e)}'
+            }
+            self.wfile.write(json.dumps(error_result).encode())
+    
+    def do_OPTIONS(self):
+        # 处理CORS预检请求
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
