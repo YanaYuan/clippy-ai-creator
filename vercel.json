@@ -6,9 +6,6 @@
     },
     "api/debug.py": {
       "runtime": "@vercel/python"
-    },
-    "api/index.py": {
-      "runtime": "@vercel/python"
     }
   },
   "routes": [
@@ -19,14 +16,6 @@
     {
       "src": "/api/debug",
       "dest": "/api/debug.py"
-    },
-    {
-      "src": "/",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/(.*\\.(css|js|html|ico|png|jpg|jpeg|gif|svg))",
-      "dest": "/$1"
     }
   ],
   "headers": [
