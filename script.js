@@ -10,7 +10,7 @@ const MAX_FILES = 3;
 let selectedTemplate = null;
 
 const API_CONFIG = {
-    baseUrl: window.location.hostname === 'localhost' ? "http://localhost:5000/api" : "/api"
+    baseUrl: "/api"  // Vercel自动路由到API函数
 };
 
 let conversationHistory = [];

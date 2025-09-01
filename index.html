@@ -72,20 +72,5 @@
     </div>
     
     <script src="script.js"></script>
-    
-    <!-- Vercel streaming fix (only for production) -->
-    <script>
-        // Only load stream fix in production/deployed environment
-        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            const script = document.createElement('script');
-            script.src = 'stream-fix.js';
-            script.onload = function() {
-                console.log('🚀 Production mode: Vercel streaming fix active');
-            };
-            document.head.appendChild(script);
-        } else {
-            console.log('🔧 Development mode: Using local Flask streaming');
-        }
-    </script>
 </body>
 </html>
