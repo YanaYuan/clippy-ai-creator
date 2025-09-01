@@ -7,11 +7,11 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# API Configuration
+# API Configuration - use environment variables
 API_CONFIG = {
-    "api_key": "sk-wAR2VA6TYUt20h9xUA326L3F1CWcZxZQa6nBZaaNekPd8Nzz",
-    "base_url": "https://www.dmxapi.cn/v1",
-    "model": "claude-sonnet-4-20250514"
+    "api_key": os.environ.get("API_KEY", ""),
+    "base_url": os.environ.get("BASE_URL", "https://www.dmxapi.cn/v1"),
+    "model": os.environ.get("MODEL", "claude-sonnet-4-20250514")
 }
 
 @app.route('/')
