@@ -87,7 +87,7 @@ def chat():
     except Exception as e:
         return jsonify({'error': f'Server error: {str(e)}'}), 500
 
-# For Vercel deployment
+# For Vercel deployment  
 app.config['DEBUG'] = False
 
 if __name__ == '__main__':
